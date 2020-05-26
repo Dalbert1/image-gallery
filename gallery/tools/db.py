@@ -1,10 +1,10 @@
 import psycopg2
 
-db_host = "demo-database-1.c923ckbw7nv.us-east-2.rds.amazonaws.com"
+db_host = "m2-crud-demo.c8bvvb163dhi.us-east-2.rds.amazonaws.com"
 db_name = "image_gallery"
 db_user = "image_gallery"
 
-password_file = "/home/ec2-user/.image_gallery_config" # NOT IN GITHUB DIR
+password_file = "/home/ec2-user/.image_gallery_config"
 
 connection = None
 
@@ -16,7 +16,7 @@ def get_password():
 	
 def connect():
 	global connection #declare as global
-	connection = psycopg2.connect("host"=db_host, dbname=db_name, user=db_user, password=get_password())
+	connection = psycopg2.connect(host=db_host, dbname=db_name, user=db_user, password=get_password())
 
 def execute(query,args=None):
 	global connection
@@ -32,9 +32,6 @@ def main():
 	res = execute('select * from users;')
 	for row in res:
 		print(row)
-	res = execute("update users set password=%s where username='fred'", ('banana',)) # passing in tuple, must include comma if only one item
-	for row in res:
-		print(row) #shows password changed for Fred
 		
 if __name__ == '__main__':
 	main()
