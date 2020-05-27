@@ -36,7 +36,7 @@ Please select from the following list of options:\n
 3) Edit user\n
 4) Delete user\n
 5) Quit\n
-		'''
+Enter: '''
 	)
 	return result
 
@@ -60,13 +60,16 @@ def listUsers():
 def getNewUser():
 	username = input('Enter a username for the new user: ')
 	salt = input('Enter a password for the new user: ')
-	full_name = input('Enter the full name of the new user')
-	new_account = [username, salt, fullname]
+	full_name = input('Enter the full name of the new user: ')
+	new_account = [username, salt, full_name]
 	return new_account
 		
-def insertUser(args):
+def insertUser():
 	args = getNewUser()
-	insert into users values (args[0], args[1], args[2]); #un, pwsd, fn
+	print(args[0], args[1], args[2])
+	res = execute("insert into users (username, password, full_name) values (%s, %s, %s);", (args[0], args[1], args[2])); #un, pwsd, fn
+	connection.commit()
+	print('User added')
 
 def editPrompt():
 	editUser = input('Please enter the username for the user you wish to edit: ')
@@ -78,7 +81,7 @@ Please select from the following list of options:\n
 2) Edit Password\n
 3) Edit Full Name\n
 4) Cancel\n
-		'''
+Enter: '''
 	)
 	
 	if (editType == '1'):
@@ -90,24 +93,28 @@ Please select from the following list of options:\n
 	else:
 		return
 	
-	editArgs = [edit_type, editUser]
+	editArgs = [editType, editUser]
 	return editArgs
 	
 def editUser():
 	editArgs= editPrompt()
 	newValue = input('Enter the new value: ')
-	res = execute("update users set '%s' = '%s' where username='%s';", (editArgs[0], newValue, editArgs[1])) 
-	
+	res = execute("update users set %s = %s where username=%s;", (editArgs[0], newValue, editArgs[1])) 
+	print('User modified')
+
 def deleteUser():
-	unluckyUser = input('Enter the username for the user you wish to delete.')
-	res = execute("delete from users where username = '%s';")
+	unluckyUser = input('Enter the username for the user you wish to delete: ')
+	res = execute("delete from users where username = %s;", (unluckyUser))
+	print('User deleted')
 	
 def main():
 	result = ''
 	connect()
 	while(result != '5'):
 		result = promptUser()
-		func = evalPrompt(result)
+		evalPrompt(result)
+		connection.commit()
+	connection.close()
 
 if __name__ == '__main__':
 	main()
