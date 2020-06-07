@@ -1,4 +1,4 @@
-from db import *
+from tools.db import *
 
 def promptAdminTask():
 	result = input(

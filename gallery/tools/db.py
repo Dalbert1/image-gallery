@@ -1,8 +1,7 @@
 import json
 import psycopg2
-from secrets import get_secret_image_gallery
+from tools.secrets import get_secret_image_gallery
 
-db_name = "image_gallery"
 connection = None
 
 def get_secret():
