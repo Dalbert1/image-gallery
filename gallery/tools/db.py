@@ -1,22 +1,27 @@
+import json
 import psycopg2
+from secrets import get_secret_image_gallery
 
-db_host = "m2-crud-demo.c8bvvb163dhi.us-east-2.rds.amazonaws.com"
 db_name = "image_gallery"
-db_user = "image_gallery"
-
-password_file = "/home/ec2-user/.image_gallery_config"
-
 connection = None
 
-def get_password():
-	f = open(password_file, "r")
-	result = f.readline()
-	f.close()
-	return result[:-1] #drops new line char at end of result
+def get_secret():
+	jsonString = get_secret_image_gallery()
+	return json.loads(jsonString) # returns python dictionary
+
+def get_password(secret):
+	return secret['password']
+
+def get_host(secret):
+	return secret['host']
+
+def get_username(secret):
+	return secret['username']
 
 def connect():
-	global connection #declare as global
-	connection = psycopg2.connect(host=db_host, dbname=db_name, user=db_user, password=get_password())
+	global connection
+	secret = get_secret()
+	connection = psycopg2.connect(host=get_host(secret), dbname=db_name, user=get_username(secret), password=get_password(secret))
 
 def execute(query,args=None):
 	global connection
@@ -30,12 +35,12 @@ def execute(query,args=None):
 def listUsers():
 	res = execute('select * from users;')
 	return res
-		
+
 def insertUser(new_account):
 	res = execute("insert into users (username, password, full_name) values (%s, %s, %s);", (new_account[0], new_account[1], new_account[2]));
 	connection.commit()
 
-	
+
 def editUser(userToEdit):
 	username = userToEdit[0]
 	password = userToEdit[1]
@@ -45,7 +50,7 @@ def editUser(userToEdit):
 	if (full_name != ''):
 		res = execute("update users set full_name = %s where username=%s;", (full_name, username))
 	connection.commit()	
-	
+
 def checkExists(username):
 	res = execute('select * from users where username=%s;', (username,))
 	row = res.fetchone()
@@ -56,10 +61,12 @@ def checkExists(username):
 def deleteUser(unluckyUser):
 	res = execute("delete from users where username = %s;", (unluckyUser,))
 	connection.commit()
-	
+
 def main():
 	connect()
-	connection.close()
+	res = listUsers()
+	for row in res:
+		print(row)
 
 if __name__ == '__main__':
-	main()
+	main()	
