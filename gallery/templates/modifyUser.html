@@ -23,15 +23,15 @@
 		</script>   
 		<h1>User Modification</h1>
 		<h2>Editing Profile for {{ username }} - {{full_name}}</h2>
-		<form action="/commitEdit" method="POST">
+		<form action="/admin/commitEdit" method="POST">
 			New Password: <input name="new_pass" value ="" /><br />
 			New Full Name: <input name="new_name" value ="{{full_name}}" /><br />
 			<input type="hidden" name="username" value="{{username}}">
-			<input type ="submit" value="Save" />
+			<input style="font-size: 16px;width: 100px;text-align: center;" type ="submit" value="Save" />
 		</form>
-		<form action="/commitDelete" method="POST">
+		<form action="/admin/commitDelete" method="POST">
 			<input type="hidden" name="username" value="{{username}}">
-			<input Onclick="return ConfirmDelete();" type ="submit" value="Delete User" />
+			<input style="font-size: 16px;width: 100px;text-align: center;" Onclick="return ConfirmDelete();" type ="submit" value="Delete User" />
 		</form>
 	</body>
 </html>

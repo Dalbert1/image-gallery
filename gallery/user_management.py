@@ -21,20 +21,20 @@ def new_user_interface():
 def modify_user(username, full_name):
 	return render_template('modifyUser.html', username=username, full_name=full_name)
 	
-@app.route('/commitEdit', methods=['POST'])
+@app.route('/admin/commitEdit', methods=['POST'])
 def commit_edit():
 	connect()
 	userToEdit = [request.form['username'], request.form['new_pass'], request.form['new_name']]
 	editUser(userToEdit)
 	return render_template('modifyUser.html', username=userToEdit[0], full_name=userToEdit[2])
 	
-@app.route('/commitDelete', methods=['POST'])
+@app.route('/admin/commitDelete', methods=['POST'])
 def commit_delete():
 	connect()
 	deleteUser(request.form['username'])
 	return redirect(url_for('admin_interface'))
 	
-@app.route('/commitNewUser', methods=['POST'])
+@app.route('/admin/commitNewUser', methods=['POST'])
 def commit_new_user():
 	new_account = [request.form['username'], request.form['new_pass'], request.form['new_fullname']]
 	connect()
