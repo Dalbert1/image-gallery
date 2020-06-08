@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>Admin - New User</title>
+	<meta charset="utf-8" /> 
+	</head>
+	<header>
+		<nav style="color: black;font-family:arial">
+			<a href="{{ url_for('admin_interface') }}">Home</a>
+			<a href="{{ url_for('new_user_interface') }}">Create New User</a>
+		</nav>
+	</header>
+	<body>
+		<h1>New User Creation</h1>
+		<form action="/commitNewUser" method="POST">
+			Username: <input name="username" value ="" /><br />
+			Password: <input name="new_pass" value ="" /><br />
+			Full Name: <input name="new_fullname" value ="" /><br />
+			<input type ="submit" value="Save" />
+		</form>
+	</body>
+</html>

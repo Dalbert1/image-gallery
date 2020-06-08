@@ -37,11 +37,26 @@ def execute(query,args=None):
 def listUsers():
 	res = execute('select * from users;')
 	return res
+	
+def listAllNoPass():
+	res = execute('select username, full_name from users;')
+	return res
+	
+def getNoPass(username):
+	res = execute('select username, full_name from users where username=%s', (username,))
+	return res
+	
+def getUserPassword(username):
+	res = execute('select password from users where username=%s;', (username,))
+	return res
+	
+def getFullName(username):
+	res = execute('select full_name from users where username=%s;', (username,))
+	return res
 
 def insertUser(new_account):
 	res = execute("insert into users (username, password, full_name) values (%s, %s, %s);", (new_account[0], new_account[1], new_account[2]));
 	connection.commit()
-
 
 def editUser(userToEdit):
 	username = userToEdit[0]
