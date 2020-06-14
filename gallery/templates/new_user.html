@@ -2,7 +2,14 @@
 <html>
 	<head>
 	<title>Admin - New User</title>
-	<meta charset="utf-8" /> 
+	<meta charset="utf-8" />
+	<style>
+			label, input {
+				width: 200px;
+				font-size: 16px;
+				margin: 10px;
+			}
+	</style> 
 	</head>
 	<header>
 		<nav style="color: black;font-family:arial">
@@ -13,10 +20,10 @@
 	<body>
 		<h1>New User Creation</h1>
 		<form action="/admin/commitNewUser" method="POST">
-			Username: <input name="username" value ="" /><br />
-			Password: <input name="new_pass" value ="" /><br />
-			Full Name: <input name="new_fullname" value ="" /><br />
-			<input style="font-size: 16px;width: 100px;text-align: center;" type ="submit" value="Save" />
+			<label>Username:</label><input name="username" value ="" /><br />
+			<label>Password:</label><input name="new_pass" value ="" /><br />
+			<label>Full Name:</label><input name="new_fullname" value ="" /><br />
+			<input style="text-align: center;" type ="submit" value="Save" />
 		</form>
 	</body>
 </html>

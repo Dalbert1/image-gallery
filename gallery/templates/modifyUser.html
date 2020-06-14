@@ -14,24 +14,24 @@
 	<script>
 				function ConfirmDelete()
 				{
-					var x = confirm("Are you sure you want to delete {{username}}?");
+					var x = confirm("Are you sure you want to delete {{username}} ({{full_name}})?");
 					if (x)
 							return true;
 					else
 						return false;
 				}
-		</script>   
+		</script>
 		<h1>User Modification</h1>
 		<h2>Editing Profile for {{ username }} - {{full_name}}</h2>
 		<form action="/admin/commitEdit" method="POST">
 			New Password: <input name="new_pass" value ="" /><br />
 			New Full Name: <input name="new_name" value ="{{full_name}}" /><br />
 			<input type="hidden" name="username" value="{{username}}">
-			<input style="font-size: 16px;width: 100px;text-align: center;" type ="submit" value="Save" />
+			<input style="margin: 5px; font-size: 16px;width: 100px;text-align: center;" type ="submit" value="Save" />
 		</form>
 		<form action="/admin/commitDelete" method="POST">
 			<input type="hidden" name="username" value="{{username}}">
-			<input style="font-size: 16px;width: 100px;text-align: center;" Onclick="return ConfirmDelete();" type ="submit" value="Delete User" />
+			<input style="margin: 5px; font-size: 16px; width: 100px; text-align: center;" Onclick="return ConfirmDelete();" type ="submit" value="Delete User" />
 		</form>
 	</body>
 </html>

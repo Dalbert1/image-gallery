@@ -1,30 +1,47 @@
 <!DOCTYPE html>
 <html>
-	<head>
+<head>
 	<title>Admin</title>
 	<meta charset="utf-8" />
+	<style>
+	
+	</style>
 	</head>
 	<header>
 		<nav style="color: black;font-family:arial">
-			<a href="{{ url_for('admin_interface') }}">Home</a>
-			<a href="{{ url_for('new_user_interface') }}">Create New User</a>
-		</nav>
+		<a href="{{ url_for('admin_interface') }}">Home</a>
+		<a href="{{ url_for('new_user_interface') }}">Create New User</a>
+	</nav>
 	</header>
 	<body>
+			<script>
+				function confirmDelete()
+				{
+					var x = confirm("Are you sure you want to delete this user?");
+					if (x)
+							return true;
+					else
+						return false;
+				}
+			</script>
 		<h1>User Administration</h1>
-		<table>
-			<thead>
-			<tr>
-				<th>Username - Full Name</th>
-			</tr>
-			</thead>
-			<tbody>
-				{% for row in user_data %}
+			{% for row in user_data %}
+				<form action="/admin/commitDelete" method="POST" style="padding: 15px">
+					<table>
 						<tr>
-							<td><a href="{{ url_for('modify_user', username=row[0], full_name=row[1]) }}">{{row[0]}} - {{row[1]}}</a></td>
+							<td style="width: 250px;">
+								<a href="{{ url_for('modify_user', username=row[0], full_name=row[1]) }}">{{row[0]}} - {{row[1]}}</a>
+							</td>
+							<td style="width: 100px;">
+								<input type="hidden" name="username" value="{{row[0]}}">
+								<input style="font-size: 16px;width: 100px;text-align: center;" Onclick="return confirmDelete();" type ="submit" value="Delete User" />
+							</td>
 						</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+					</table>
+				</form>
+			{% else %}
+				<h2>No users found.</h2>
+			{% endfor %}
 	</body>
 </html>
+
