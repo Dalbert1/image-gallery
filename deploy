@@ -5,4 +5,8 @@ if [ "$#" != "1" ]; then
 	exit 1
 fi
 
+BUCKET="edu.au.cc.python-image-gallery-config"
+# can alias w/ bucket from now on
 aws s3 cp ec2-scripts/ec2-prod-$1.sh s3://edu.au.cc.python-image-gallery-config
+aws s3 cp nginx/nginx.conf s3://edu.au.cc.python-image-gallery-config/nginx/nginx.conf
+aws s3 cp nginx/default.d/image_gallery.conf s3://edu.au.cc.python-image-gallery-config/nginx/default.d/image_gallery.conf
