@@ -21,5 +21,7 @@ aws s3 cp s3://${CONFIG_BUCKET}/nginx/default.d/image_gallery.conf /etc/nginx/de
 # Start/enable services
 systemctl stop postfix
 systemctl disable postfix
+systemctl start nginx
+systemctl enable nginx
 
 su ec2-user -l -c "cd ~/python-image-gallery && ./start">/var/log/image_gallery.log 2>&1 &
