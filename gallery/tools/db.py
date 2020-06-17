@@ -1,6 +1,7 @@
 import json
 import psycopg2
-from tools.secrets import get_secret_image_gallery
+#from tools.secrets import get_secret_image_gallery
+import secrets
 
 connection = None
 
