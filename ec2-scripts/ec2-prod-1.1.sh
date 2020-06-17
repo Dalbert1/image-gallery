@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export IMAGE_GALLERY_BOOTSTRAP_VERSION="1.1"
-BUCKET="edu.au.cc.python-image-gallery-config"
+CONFIG_BUCKET="edu.au.cc.python-image-gallery-config"
 
 # Install Packages
 sudo yum update -y
@@ -12,7 +12,7 @@ cd /home/ec2-user/
 git clone https://github.com/Dalbert1/python-image-gallery.git
 chown -R ec2-user:ec2-user python-image-gallery
 cd python-image-gallery/
-pip3 install -r requirements.txt --user
+sudo pip3 install -r requirements.txt --user
 
 aws s3 cp s3://${CONFIG_BUCKET}/nginx/nginx.conf /etc/nginx
 aws s3 cp s3://${CONFIG_BUCKET}/nginx/default.d/image_gallery.conf /etc/nginx/default.d

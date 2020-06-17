@@ -12,7 +12,7 @@ cd /home/ec2-user
 git clone https://github.com/Dalbert1/python-image-gallery.git
 chown -R ec2-user:ec2-user python-image-gallery
 cd python-image-gallery/
-pip3 install -r requirements.txt --user 
+sudo pip3 install -r requirements.txt --user 
 
 #su ec2-user -c "cd ~/python-image-gallery && pip3 install -r requirements.txt --user" 
 # LINE ABOVE DID NOT WORK PROMPTED FOR PASSWORD
