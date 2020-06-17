@@ -8,7 +8,7 @@ sudo yum install -y python3 git postgres postgresql-devel gcc python3-devel
 amazon-linux-extras install -y nginx1
 
 # Configure/install custom software
-cd /home/ec2-user
+cd /home/ec2-user/
 git clone https://github.com/Dalbert1/python-image-gallery.git
 chown -R ec2-user:ec2-user python-image-gallery
 cd python-image-gallery/
