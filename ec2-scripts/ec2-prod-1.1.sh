@@ -12,11 +12,12 @@ cd /home/ec2-user/
 git clone https://github.com/Dalbert1/python-image-gallery.git
 chown -R ec2-user:ec2-user python-image-gallery
 cd python-image-gallery/
-sudo pip3 install -r requirements.txt --user
+sudo pip3 install -r requirements.txt
 
 aws s3 cp s3://${CONFIG_BUCKET}/nginx/nginx.conf /etc/nginx
 aws s3 cp s3://${CONFIG_BUCKET}/nginx/default.d/image_gallery.conf /etc/nginx/default.d
-
+aws s3 cp s3://${CONFIG_BUCKET}/nginx/index.html /usr/share/nginx/html
+chown nginx:nginx /usr/share/nginx/html/index.html
 
 # Start/enable services
 systemctl stop postfix
