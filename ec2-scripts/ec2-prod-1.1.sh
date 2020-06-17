@@ -4,7 +4,7 @@ BUCKET="edu.au.cc.python-image-gallery-config"
 
 # Install Packages
 sudo yum update -y
-sudo yum install -y python3 git
+sudo yum install -y python3 git postgres postgresql-devel gcc
 amazon-linux-extras install -y nginx1
 
 # Configure/install custom software
