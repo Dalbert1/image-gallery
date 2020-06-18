@@ -1,10 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, request
 
-import sys
-sys.path.append('/home/ec2-user/python-image-gallery/gallery/tools/')
-from ..tools import db
+import gallery.tools.db
 
-app = Flask('ui')
+app = Flask(__name__)
 
 @app.route('/')
 def load_admin():
