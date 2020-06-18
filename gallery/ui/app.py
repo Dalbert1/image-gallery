@@ -1,42 +1,44 @@
-from flask import Flask
-from flask import request
-from flask import render_template
+from flask import Flask, render_template, redirect, url_for, request
+
+from gallery.tools.db import *
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-    return """
-<!DOCTYPE html>
-<html>
-   <head>
-      <title>Hello</title>
-      <meta charset="utf-8" />
-   </head>
-   <body>
-     <h1>Hello, Austin!</h1>
-   </body>
-</html>
-"""
+def load_admin():
+        return redirect(url_for('admin_interface'))
 
-@app.route('/goodbye')
-def goodbye():
-    return 'Goodbye'
+@app.route('/admin')
+def admin_interface():
+        connect()
+        user_data = listAllNoPass().fetchall()
+        return render_template('admin.html', user_data=user_data)
 
-@app.route('/greet/<name>')
-def greet(name):
-    return 'Nice to meet you ' + name
+@app.route('/admin/newUser')
+def new_user_interface():
+        return render_template('new_user.html')
 
-@app.route('/add/<int:x>/<int:y>', methods = ['GET'])
-def add(x, y):
-    return 'The sum is ' + str(x + y)
+@app.route('/admin/modifyUser/<username>/<full_name>')
+def modify_user(username, full_name):
+        return render_template('modifyUser.html', username=username, full_name=full_name)
 
-@app.route('/mult', methods=['POST'])
-def mult():
-    x = request.form['x']
-    y = request.form['y']
-    return 'The product is ' + str(x*y)
+@app.route('/admin/commitEdit', methods=['POST'])
+def commit_edit():
+        connect()
+        userToEdit = [request.form['username'], request.form['new_pass'], request.form['new_name']]
+        editUser(userToEdit)
+        return render_template('modifyUser.html', username=userToEdit[0], full_name=userToEdit[2])
 
-@app.route('/calculator/<personsName>')
-def calculator(personsName):
-    return render_template('calculator.html', name=personsName)
+@app.route('/admin/commitDelete', methods=['POST'])
+def commit_delete():
+        connect()
+        deleteUser(request.form['username'])
+        return redirect(url_for('admin_interface'))
+
+@app.route('/admin/commitNewUser', methods=['POST'])
+def commit_new_user():
+        new_account = [request.form['username'], request.form['new_pass'], request.form['new_fullname']]
+        connect()
+        if(checkExists(new_account[0]) == False):
+                insertUser(new_account)
+        return redirect(url_for('admin_interface'))
