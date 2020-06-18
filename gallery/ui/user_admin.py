@@ -2,9 +2,9 @@ from flask import Flask, render_template, redirect, url_for, request
 
 import sys
 sys.path.append('/home/ec2-user/python-image-gallery/gallery/tools/')
-import db
+from ..tools import db
 
-app = Flask(__name__)
+app = Flask('ui')
 
 @app.route('/')
 def load_admin():
