@@ -6,7 +6,18 @@ app = Flask(__name__)
 
 @app.route('/')
 def load_admin():
-        return redirect(url_for('admin_interface'))
+    return """
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Hello</title>
+      <meta charset="utf-8" />
+   </head>
+   <body>
+     <h1>Hello, Dylan!</h1>
+   </body>
+</html>
+"""
 
 @app.route('/admin')
 def admin_interface():
