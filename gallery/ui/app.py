@@ -53,14 +53,36 @@ def invalidLogin():
 def login():
    if request.method == 'POST':
       user = get_user_dao().get_user_by_username(request.form["username"]) # returns user object from DAO
-      if user is None or user.password != request.form["password"]: # if user not found or password wrong
+      if user is None or user.password != request.form["password"]: 
          return redirect('/invalidLogin')
       else:
          session['username'] = request.form["username"]
-        # return redirect('/debugSession')
+        # return redirect('/debugSession'):
          return render_template('users.html', users=get_user_dao().get_users()) # just redirecting here for now 
    else:
       return render_template('login.html')
+      
+      
+@app.route('/admin/newUser')
+def new_user_interface():
+   return render_template('new_user.html')
+
+@app.route('/admin/editUser/<username>/<full_name>', methods=['GET'])
+def modify_user(username, full_name):
+   user = get_user_dao().get_user_by_username(username) # returns user object from DAO
+   if user is None:  # if user not found or password wrong
+      return redirect('/admin/users')
+   else:
+      return render_template('editUser.html', user=user)
+
+@app.route('/admin/commitEdit', methods=['POST'])
+def commit_edit():
+   user = get_user_dao().delete_user(request.form["username"])
+   editUser(userToEdit)
+   return render_template('editUser.html', username=userToEdit[0], full_name=userToEdit[2])      
+      
+      
+      
    
 @app.route('/storeStuff')
 def storeStuff():

@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>Admin - User Modification</title>
+	<title>Admin - Edit User</title>
 	<meta charset="utf-8" /> 
 	</head>
 	<header>
 		<nav style="color: black;font-family:arial">
 			<a href="{{ url_for('users') }}">Home</a>
-			<!-- <a href="{{ url_for('new_user_interface') }}">Create New User</a> -->
+			<a href="{{ url_for('new_user_interface') }}">Create New User</a>
 		</nav>
 	</header>
 	<body>
 	<script>
 				function ConfirmDelete()
 				{
-					var x = confirm("Are you sure you want to delete {{username}} ({{full_name}})?");
+					var x = confirm("Are you sure you want to delete {{user.username}} ({{user.full_name}})?");
 					if (x)
 							return true;
 					else
@@ -22,14 +22,14 @@
 				}
 		</script>
 		<h1>User Modification</h1>
-		<h2>Editing Profile for {{ username }} - {{full_name}}</h2>
+		<h2>Editing Profile for {{ user.username }}</h2>
 		<form action="/admin/commitEdit" method="POST">
-			New Password: <input name="new_pass" value ="" /><br />
-			New Full Name: <input name="new_name" value ="{{full_name}}" /><br />
+			New Password: <input name="password" value ="" /><br />
+			New Full Name: <input name="full_name" value ="" /><br />
 			<input type="hidden" name="username" value="{{username}}">
 			<input style="margin: 5px; font-size: 16px;width: 100px;text-align: center;" type ="submit" value="Save" />
 		</form>
-		<form action="/admin/commitDelete" method="POST">
+		<form action="/admin/deleteUser/{{ username }}" method="POST">
 			<input type="hidden" name="username" value="{{username}}">
 			<input style="margin: 5px; font-size: 16px; width: 100px; text-align: center;" Onclick="return ConfirmDelete();" type ="submit" value="Delete User" />
 		</form>
