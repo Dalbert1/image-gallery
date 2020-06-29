@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Admin - Users List</title>
+	<meta charset="utf-8" />
+	</head>
+	<header>
+		<nav style="color: black;font-family:arial">
+		<a href="{{ url_for('users') }}">Home</a>
+	</nav>
+	</header>
+	<body>
+		<h1>Users</h1>
+		<ol>
+		  {% if users %}
+			{% for user in users %}
+			<li><a href="/admin/editUser/{{ user.username}}"{{ user }}>{{ user.full_name|upper }} ({{user.username}})</a> -- <a href="/admin/deleteUser/{{ user.username }}"></a></li>
+			{% else %}
+				<h2>No users found.</h2>
+			{% endfor %}
+		 {% endif %}
+		</ol>
+	</body>
+</html>
