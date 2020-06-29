@@ -25,6 +25,10 @@ def requires_admin(view):
          return redirect('/login')
       return view(**kwargs)
    return decorated
+   
+@app.route('/') #/admin/users replacement
+def root_page(): # admin_interface()
+   return render_template('login.html')
          
 @app.route('/admin/users') #/admin/users replacement
 @requires_admin # wrapper from above
@@ -75,13 +79,21 @@ def modify_user(username, full_name):
    else:
       return render_template('editUser.html', user=user)
 
-@app.route('/admin/commitEdit', methods=['POST'])
+@app.route('/admin/commitEdit/', methods=['POST'])
 def commit_edit():
-   user = get_user_dao().delete_user(request.form["username"])
-   editUser(userToEdit)
-   return render_template('editUser.html', username=userToEdit[0], full_name=userToEdit[2])      
+   user = get_user_dao().get_user_by_username(username)
+   if user is None:  # if user not found or password wrong
+      return redirect('/admin/users')
+   else:
+      get_user_dao().modify_user(request.form["username"], request.form["new_password"], request.form["new_full_name"])
+      return redirect('/admin/users')    
       
-      
+@app.route('/admin/commitNewUser', methods=['POST'])
+def commit_new():
+   user = get_user_dao().get_user_by_username(request.form["username"]) # returns user object from DAO
+   if user is None:  # if user not found or password wrong
+      get_user_dao().create_user(request.form["username"], request.form["password"], request.form["full_name"])
+   return redirect('/admin/users')      
       
    
 @app.route('/storeStuff')

@@ -7,6 +7,7 @@
 	<header>
 		<nav style="color: black;font-family:arial">
 		<a href="{{ url_for('users') }}">Home</a>
+		<a href="{{ url_for('new_user_interface') }}">Create New User</a>
 	</nav>
 	</header>
 	<body>
@@ -14,7 +15,7 @@
 		<ol>
 		  {% if users %}
 			{% for user in users %}
-			<li><a href="/admin/editUser/{{ user.username}}/{{ user.full_name }}"{{ user }}>{{ user.full_name|upper }} ({{user.username}})</a> -- <a href="/admin/deleteUser/{{ user.username }}"></a></li>
+			<li><a href="/admin/editUser/{{ user.username}}/{{ user.full_name }}"{{ user }}>{{ user.full_name|upper }} ({{user.username}})</a> -- <a href="/admin/deleteUser/{{user.username}}">Delete</a></li>
 			{% else %}
 				<h2>No users found.</h2>
 			{% endfor %}
