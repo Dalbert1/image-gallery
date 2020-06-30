@@ -60,7 +60,7 @@ def get_secret_image_gallery():
 def get_secret_flask_session():
 
 	secret_name = "sec-ig-flask_session"
-	region_name = "us-east-2"
+	region_name = "us-west-2"
 
 	# Create a Secrets Manager client
 	session = boto3.session.Session()
