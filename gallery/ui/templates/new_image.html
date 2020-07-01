@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Upload Image</title>
+   <meta charset="utf-8" />
+   </head>
+   <header>
+      <nav style="color: black;font-family:arial">
+      <a href="/{{ user.username }}/upload">Upload Image</a>
+      <a href="{{ user.username }}/all_images">View Images</a>
+      <a href="{{ url_for('users') }}">Admin</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+   </nav>
+   </header>
+   <body>
+      <!DOCTYPE html>
+      <html>
+         <head>
+            <title>S3 Image Upload</title>
+         </head>
+         <body>
+            <div class="content">
+                  <h3>S3 Flask Image Gallery</h3>
+                  <p>Welcome!</p>
+                  <div>
+                     <h3>Upload your file here:</h3>
+                     <form method="POST" action="{{ url_for('upload') }}" enctype=multipart/form-data>
+                        <input name=username value={{ user.username }}>
+                        <input type=file name=file>
+                        <input type=submit value=Upload>
+                     </form>
+                  </div>
+            </div>
+         </body>
+      </html>
+   </body>
+</html>
+

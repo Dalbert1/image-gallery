@@ -20,15 +20,24 @@ class PostgresUserDAO(UserDAO):
          return None
       else:
          return User(row[0], row[1], row[2])
+         
+   def get_admin_user_by_username(self, username):
+      cursor = db.execute("select is_admin from users where username=%s", (username,))
+      row = cursor.fetchone()
+      if row is None:
+         return None
+      else:
+         return row[0]
       
    def delete_user(self, username):
       db.execute("delete from users where username=%s", (username,))
       
-   def create_user(self, username, password, full_name):
-      db.execute("insert into users (username, password, full_name) values (%s, %s, %s);", (username, password, full_name));
+   def create_user(self, username, password, full_name, is_admin=False):
+      db.execute("insert into users (username, password, full_name, is_admin) values (%s, %s, %s, %s);", (username, password, full_name, is_admin));
 
    def modify_user(self, username, password, full_name):
       if (password != ''):
-         db.res = execute("update users set password = %s where username=%s;", (password, username))
+         db.execute("update users set password = %s where username=%s;", (password, username))
       if (full_name != ''):
          db.execute("update users set full_name = %s where username=%s;", (full_name, username))
+
