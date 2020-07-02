@@ -1,5 +1,4 @@
-#import os
-#import base64
+from base64 import b64encode
 from flask import Flask, flash, session, render_template, redirect, url_for, request #, #send_file
 from gallery.tools.postgres_user_dao import PostgresUserDAO
 from gallery.tools.user import User
@@ -89,15 +88,15 @@ def user_images(username):
    print(user_images)
    s3_imports = []
    for img_name in user_images:
-      print(img_name)
       image_object = get_object(BUCKET, img_name)
-      s3_imports.append(image_object)
+      b64_img = b64encode(image_object).decode("utf-8")
+      s3_imports.append(b64_img)
       print(image_object)
-   
-   return render_template('all_user_images.html', bucket=BUCKET, contents=user_images, username=username)
+      print(s3_imports) 
+   return render_template('all_user_images.html', contents=s3_imports)
    #return render_template('all_user_images.html', bucket=BUCKET, contents=s3_imports)      
       
-      
+      #https://{{ bucket }}.s3.amazonaws.com/{{image}}
       
       
 

@@ -36,7 +36,7 @@
                      <ul>
                         {% for image in contents %}
                            <li>
-                              <img width: 200px; src="https://{{ bucket }}.s3.amazonaws.com/{{ image }}">
+                              <img src="data:image/jpeg;base64,{{ image | safe }}">
                            </li>
                         {% endfor %}
                      </ul>

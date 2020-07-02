@@ -1,6 +1,9 @@
 import logging
 import boto3
+import botocore
 from botocore.exceptions import ClientError
+
+s3_resource = boto3.resource('s3')
 
 def create_bucket(bucket_name, region=None):
 	try:
@@ -28,12 +31,16 @@ def put_object(bucket_name, key, value):
 	
 def get_object(bucket_name, key):
 	try:
-		s3_client = boto3.client('s3')
-		result = s3_client.get_object(Bucket=bucket_name, Key=key)
+	#	s3_client = boto3.client('s3')
+	#	result = s3_client.get_object(Bucket=bucket_name, Key=key)
+	#	body = result.get()['Body'].read()
+		s3_resource = boto3.resource('s3')
+		obj = s3_resource.Object(bucket_name, key)
+		body = obj.get()['Body'].read()
 	except ClientError as e:
 		logging.error(e)
 		return None
-	return result
+	return body
 	
 '''
 # Retrieve the list of existing buckets
