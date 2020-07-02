@@ -6,8 +6,9 @@
    </head>
    <header>
       <nav style="color: black;font-family:arial">
+      <a href="{{ url_for('root_page') }}">Home</a>
       <a href="/{{ user.username }}/upload">Upload Image</a>
-      <a href="{{ user.username }}/all_images">View Images</a>
+      <a href="/{{ user.username }}/all_images">View Images</a>
       <a href="{{ url_for('users') }}">Admin</a>
       <a href="{{ url_for('logout') }}">Logout</a>
    </nav>

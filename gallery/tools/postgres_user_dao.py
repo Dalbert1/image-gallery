@@ -40,4 +40,11 @@ class PostgresUserDAO(UserDAO):
          db.execute("update users set password = %s where username=%s;", (password, username))
       if (full_name != ''):
          db.execute("update users set full_name = %s where username=%s;", (full_name, username))
+         
+   def get_images_by_username(self, username):
+      result = []
+      cursor = db.execute("select image_name from s3_images where username=%s;", (username,))
+      for t in cursor.fetchall():
+         result.append(t[0])
+      return result
 

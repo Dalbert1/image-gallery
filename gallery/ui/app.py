@@ -1,47 +1,29 @@
-import os
-import base64
-from flask import Flask, flash, session, render_template, redirect, url_for, request, send_file
+#import os
+#import base64
+from flask import Flask, flash, session, render_template, redirect, url_for, request #, #send_file
 from gallery.tools.postgres_user_dao import PostgresUserDAO
 from gallery.tools.user import User
-from gallery.tools.db import connect
+from gallery.tools.db import connect, insertImage, deleteImage
 from gallery.tools.secrets import get_secret_flask_session
-from gallery.tools.s3 import list_files, upload_file, download_file, put_object
+from gallery.tools.s3 import get_object, put_object
 from werkzeug.utils import secure_filename
 from functools import wraps
 
 
 
 
-import logging
-import boto3
-from botocore.exceptions import ClientError
+#import logging
+#import boto3
+#from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 app.secret_key = get_secret_flask_session()
-
-UPLOAD_FOLDER = "uploads"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 BUCKET = "edu.au.cc.m6.python-image-gallery"
 
 #app.config['UPLOAD_FOLDER']
 
 connect()
-
-# Retrieve the list of existing buckets
-s3 = boto3.client('s3')
-response = s3.list_buckets()
-
-# Output the bucket names
-print('Existing buckets:')
-for bucket in response['Buckets']:
-   print(f'  {bucket["Name"]}')
-   
-   
-def allowed_file(filename):
-   return '.' in filename and \
-         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS   
-   
-   
 
 def get_user_dao():
    return PostgresUserDAO()
@@ -72,77 +54,53 @@ def requires_auth(view):
       return view(**kwargs)
    return decorated
    
-   
-
-
-
-
+#@app.route("/upload", methods=['GET', 'POST'])
 
 #performs the file uploads
 @app.route("/upload", methods=['GET', 'POST'])
+@requires_auth
 def upload():
-  # if request.method == 'POST':
-    #  print(request.files)
-     #    print(request.files['photo'])
-   print(request.files)
-   image = request.files['file']  
-   image_string = base64.b64encode(image.read())
-   print(request)
-   print(os.path)
-   print(image)
-   filename = secure_filename(image.filename)
-   #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-   put_object(BUCKET, image.filename, image)
-   # f#ilename = secure_filename(image_string)
-   #print(image_string)
-  # upload_file(image_string, BUCKET)
-   #print('File pushed to s3')
-   #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-   return redirect(url_for('root_page'))
+   if request.method == 'POST':
+      image = request.files['file']
+      
+      path = session['username'] + '/' + image.filename
+      put_object(BUCKET, path, image)
+      
+      user = session['username']
+      insertImage(user, path)
+      
+      return redirect(url_for('root_page'))
       
       
-"""
-# check if the post request has the file part
-if 'file' not in request.files:
-flash('No file part')
-return redirect(request.url)
-file = request.files['photo']
-# if user does not select file, browser also
-# submit an empty part without filename
-if file.filename == '':
-flash('No selected file')
-return redirect(request.url)
-if file and allowed_file(file.filename):
-image = request.files['photo']  
-image_string = base64.b64encode(image.read())
-# f#ilename = secure_filename(image_string)
-print(image_string)
-upload_file(image_string, BUCKET)
-print('File pushed to s3')
-#file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-return redirect(url_for('/'))
-else:
-return '''
-<!doctype html>
-<title>Upload new File</title>
-<h1>Upload new File</h1>
-<form method=post enctype=multipart/form-data>
-<input type=file name=file>
-<input type=submit value=Upload>
-</form>
-'''
-"""
+# page for user to upload their new file
+@app.route('/<username>/upload', methods=['GET'])
+@requires_auth
+def new_image(username):
+   return render_template('new_image.html', user=get_user_dao().get_user_by_username(session['username']))
 
 
 
-
-
-
-
+      
+#displays all images for given user
+@app.route('/<username>/all_images', methods=['GET', 'POST'])
+@requires_auth
+def user_images(username):
+   user_images = get_user_dao().get_images_by_username(username)
+   print(user_images)
+   s3_imports = []
+   for img_name in user_images:
+      print(img_name)
+      image_object = get_object(BUCKET, img_name)
+      s3_imports.append(image_object)
+      print(image_object)
    
-   
-   
+   return render_template('all_user_images.html', bucket=BUCKET, contents=user_images, username=username)
+   #return render_template('all_user_images.html', bucket=BUCKET, contents=s3_imports)      
+      
+      
+      
+      
+
 
 @app.route('/')
 @requires_auth
@@ -232,35 +190,6 @@ def commit_new():
    return redirect('/admin/users')      
       
    
-
-
-
-
-
-
-
-# performs file downloads
-@app.route("/download/<filename>", methods=['GET'])
-def download(filename):
-   if request.method == 'GET':
-      output = download_file(filename, BUCKET)
-      return send_file(output, as_attachment=True)
-
-
-# page for user to upload their new file
-@app.route('/<username>/upload', methods=['GET'])
-@requires_auth
-def new_image(username):
-   return render_template('new_image.html', user=get_user_dao().get_user_by_username(session['username']))
-
-
-#displays all images for given user
-@app.route('/<username>/all_images', methods=['GET'])
-@requires_auth
-def user_images(username):
-   contents = list_files("edu.au.cc.m6.python-image-gallery")
-   return render_template('all_user_images.html', contents=contents)
-     
 # reset session var
 @app.route('/reset')
 def storeStuff():

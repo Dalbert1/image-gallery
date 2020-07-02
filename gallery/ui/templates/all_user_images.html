@@ -6,8 +6,9 @@
    </head>
    <header>
       <nav style="color: black;font-family:arial">
-      <a href="{{ url_for('new_image') }}">Upload Image</a>
-      <a href="{{ url_for('user_images') }}">View Images</a>
+      <a href="{{ url_for('root_page') }}">Home</a>
+      <a href="/{{ username }}/upload">Upload Image</a>
+      <a href="/{{ username }}/all_images">View Images</a>
       <a href="{{ url_for('users') }}">Admin</a>
       <a href="{{ url_for('logout') }}">Logout</a>
    </nav>
@@ -33,9 +34,9 @@
                      <h3>These are your uploaded files:</h3>
                      <p>Click on the filename to download it.</p>
                      <ul>
-                        {% for item in contents %}
+                        {% for image in contents %}
                            <li>
-                              <a href="/download/{{ item.Key }}"> {{ item.Key }} </a>
+                              <img width: 200px; src="https://{{ bucket }}.s3.amazonaws.com/{{ image }}">
                            </li>
                         {% endfor %}
                      </ul>

@@ -1,7 +1,7 @@
 import json
 import psycopg2
 from gallery.tools.secrets import get_secret_image_gallery
-#import secrets
+from . import secrets
 
 connection = None
 
@@ -59,15 +59,27 @@ def getFullName(username):
 def insertUser(new_account):
 	res = execute("insert into users (username, password, full_name) values (%s, %s, %s);", (new_account[0], new_account[1], new_account[2]));
 	connection.commit()
-
+	
+def insertImage(username, image_name):
+	res = execute("insert into s3_images (username, image_name) values (%s, %s);", (username, image_name))
+	return res
+	
+def deleteImage(username, image_name):
+	res = execute("delete from s3_images where username=%s and image_name %s;", (username, image_name))
+	return res
+	
+def listImages(username):
+	res = execute()
+	return res
+	
 def editUser(userToEdit):
 	username = userToEdit[0]
 	password = userToEdit[1]
 	full_name = userToEdit[2]
 	if (password != ''):
-		res = execute("update users set password = %s where username=%s;", (password, username))
+		res = execute("update users set password=%s where username=%s;", (password, username))
 	if (full_name != ''):
-		res = execute("update users set full_name = %s where username=%s;", (full_name, username))
+		res = execute("update users set full_name=%s where username=%s;", (full_name, username))
 	connection.commit()	
 
 def checkExists(username):
@@ -78,7 +90,7 @@ def checkExists(username):
 	return False
 
 def deleteUser(unluckyUser):
-	res = execute("delete from users where username = %s;", (unluckyUser,))
+	res = execute("delete from users where username=%s;", (unluckyUser,))
 	connection.commit()
 
 def main():
