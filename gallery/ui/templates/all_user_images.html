@@ -7,8 +7,8 @@
    <header>
       <nav style="color: black;font-family:arial">
       <a href="{{ url_for('root_page') }}">Home</a>
-      <a href="/{{ username }}/upload">Upload Image</a>
-      <a href="/{{ username }}/all_images">View Images</a>
+      <a href="/{{ user.username }}/upload">Upload Image</a>
+      <a href="/{{ user.username }}/all_images">View Images</a>
       <a href="{{ url_for('users') }}">Admin</a>
       <a href="{{ url_for('logout') }}">Logout</a>
    </nav>
@@ -22,24 +22,21 @@
          <body>
             <div class="content">
                   <h3>S3 Flask Image Gallery</h3>
-                  <p>Welcome!</p>
+                  <p>Welcome, {{ user.full_name}} ({{ user.username }})!</p>
                   <div>
-                     <h3>Upload your file here:</h3>
-                     <form method="POST" action="/upload" enctype=multipart/form-data>
-                        <input type=file name=file>
-                        <input type=submit value=Upload>
-                     </form>
-                  </div>
-                  <div>
+                     
+                     {% if contents %}
                      <h3>These are your uploaded files:</h3>
-                     <p>Click on the filename to download it.</p>
-                     <ul>
-                        {% for image in contents %}
-                           <li>
-                              <img src="data:image/jpeg;base64,{{ image | safe }}">
-                           </li>
-                        {% endfor %}
-                     </ul>
+                        <ul>
+                           {% for image in contents %}
+                              <li>
+                                 <img src="data:image/jpeg;base64,{{ image | safe }}" style="width: 100%; max-width: 350px;">
+                              </li>
+                           {% endfor %}
+                        </ul>
+                     {% else %}
+                        <h3>You don't currently have any uploaded images!</h3>
+                     {% endif %}
                   </div>
             </div>
          </body>

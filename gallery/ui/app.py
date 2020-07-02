@@ -53,7 +53,6 @@ def requires_auth(view):
       return view(**kwargs)
    return decorated
    
-#@app.route("/upload", methods=['GET', 'POST'])
 
 #performs the file uploads
 @app.route("/upload", methods=['GET', 'POST'])
@@ -61,13 +60,10 @@ def requires_auth(view):
 def upload():
    if request.method == 'POST':
       image = request.files['file']
-      
       path = session['username'] + '/' + image.filename
       put_object(BUCKET, path, image)
-      
       user = session['username']
       insertImage(user, path)
-      
       return redirect(url_for('root_page'))
       
       
@@ -77,41 +73,34 @@ def upload():
 def new_image(username):
    return render_template('new_image.html', user=get_user_dao().get_user_by_username(session['username']))
 
-
-
-      
 #displays all images for given user
 @app.route('/<username>/all_images', methods=['GET', 'POST'])
 @requires_auth
 def user_images(username):
    user_images = get_user_dao().get_images_by_username(username)
-   print(user_images)
    s3_imports = []
    for img_name in user_images:
       image_object = get_object(BUCKET, img_name)
       b64_img = b64encode(image_object).decode("utf-8")
       s3_imports.append(b64_img)
-      print(image_object)
-      print(s3_imports) 
-   return render_template('all_user_images.html', contents=s3_imports)
-   #return render_template('all_user_images.html', bucket=BUCKET, contents=s3_imports)      
-      
-      #https://{{ bucket }}.s3.amazonaws.com/{{image}}
-      
-      
+   return render_template('all_user_images.html', contents=s3_imports, user=get_user_dao().get_user_by_username(username))
 
 
+
+# WORKING       
 @app.route('/')
 @requires_auth
 def root_page():
    return render_template('home.html', user=get_user_dao().get_user_by_username(session['username']))
-   
+
+# WORKING    
 @app.route('/logout')
 @requires_auth
 def logout():
    session['username'] = None
    return redirect('/login')
-   
+
+# WORKING 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
    if request.method == 'POST':
@@ -125,7 +114,7 @@ def login():
    else:
       return render_template('login.html')
          
-         
+# WORKING         
 @app.route('/admin/users')
 @requires_admin 
 def users():
