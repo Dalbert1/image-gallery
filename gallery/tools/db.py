@@ -9,17 +9,25 @@ def get_secret():
 	jsonString = get_secret_image_gallery()
 	return json.loads(jsonString) # returns python dictionary
 
+def get_secret():
+   jsonString = get_secret_image_gallery()
+   return json.loads(jsonString) # returns python dictionary
+
 def get_password(secret):
-    	return os.getenv("IG_PASSWD") #secret['password']
+   #return os.getenv("IG_PASSWD") 
+   return secret['password']
 
 def get_host(secret):
-	return os.getenv("PG_HOST") #secret['host']
+   #return os.getenv("PG_HOST") 
+   return secret['host']
 
 def get_username(secret):
-	return os.getenv("IG_USER") #secret['username']
-	
+  # return os.getenv("IG_USER") 
+   return secret['username']
+   
 def get_dbname(secret):
-	return os.getenv("IG_DATABASE") #secret['database_name']
+   #return os.getenv("IG_DATABASE") #
+   return secret['database_name']
 
 def connect():
 	global connection
