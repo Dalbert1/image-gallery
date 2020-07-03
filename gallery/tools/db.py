@@ -1,7 +1,7 @@
 import json
 import psycopg2
+import os
 from gallery.tools.secrets import get_secret_image_gallery
-from . import secrets
 
 connection = None
 
@@ -10,16 +10,16 @@ def get_secret():
 	return json.loads(jsonString) # returns python dictionary
 
 def get_password(secret):
-	return secret['password']
+    	return os.getenv("IG_PASSWD") #secret['password']
 
 def get_host(secret):
-	return secret['host']
+	return os.getenv("PG_HOST") #secret['host']
 
 def get_username(secret):
-	return secret['username']
+	return os.getenv("IG_USER") #secret['username']
 	
 def get_dbname(secret):
-	return secret['database_name']
+	return os.getenv("IG_DATABASE") #secret['database_name']
 
 def connect():
 	global connection
@@ -65,7 +65,11 @@ def insertImage(username, image_name):
 	return res
 	
 def deleteImage(username, image_name):
-	res = execute("delete from s3_images where username=%s and image_name %s;", (username, image_name))
+	res = execute("delete from s3_images where username=%s and image_name=%s;", (username, image_name))
+	return res
+	
+def deleteAllUserImages(username):
+	res = execute("delete from s3_images where username =%s;", (username,))
 	return res
 	
 def listImages(username):

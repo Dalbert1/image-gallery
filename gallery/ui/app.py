@@ -2,7 +2,7 @@ from base64 import b64encode
 from flask import Flask, flash, session, render_template, redirect, url_for, request #, #send_file
 from gallery.tools.postgres_user_dao import PostgresUserDAO
 from gallery.tools.user import User
-from gallery.tools.db import connect, insertImage, deleteImage
+from gallery.tools.db import connect, insertImage, deleteImage, deleteAllUserImages
 from gallery.tools.secrets import get_secret_flask_session
 from gallery.tools.s3 import get_object, put_object
 from werkzeug.utils import secure_filename
@@ -110,20 +110,20 @@ def login():
       else:
          session['username'] = request.form["username"]
         # return redirect('/debugSession'):
-         return render_template('users.html', users=get_user_dao().get_users()) # just redirecting here for now 
+         return render_template('home.html', user=get_user_dao().get_user_by_username(session['username']))
    else:
       return render_template('login.html')
          
 # WORKING         
-@app.route('/admin/users')
+@app.route('/admin/users', methods=['GET', 'POST'])
 @requires_admin 
 def users():
    return render_template('users.html', users=get_user_dao().get_users())
 
 # WORKING
-@app.route('/admin/deleteUser/<username>')
+@app.route('/admin/deleteUser/<username>', methods=['GET', 'POST'])
 @requires_admin 
-def deleteUser():
+def deleteUser(username):
    return render_template("confirm.html", 
                            title ="Confirm Delete", 
                            message="Are you sure you want to delete this user?",
@@ -131,10 +131,11 @@ def deleteUser():
                            on_no="/admin/users")
                        
 # WORKING
-@app.route('/admin/executeDeleteUser/<username>')
+@app.route('/admin/executeDeleteUser/<username>', methods=['GET', 'POST'])
 @requires_admin 
 def executeDeleteUser(username):
    get_user_dao().delete_user(username)
+   deleteAllUserImages(username)
    return redirect('/admin/users')
 
 # WORKING
@@ -158,9 +159,7 @@ def modify_user(username, full_name):
 def commit_edit():
    if request.method == 'POST':
       get_user_dao().modify_user(request.form["username"], request.form["new_password"], request.form["new_full_name"])
-      return render_template('users.html', users=get_user_dao().get_users())
-   else:
-      return render_template('users.html', users=get_user_dao().get_users())
+   return render_template('users.html', users=get_user_dao().get_users())
    
 # WORKING
 @app.route('/admin/newUser')
