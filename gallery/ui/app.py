@@ -1,3 +1,4 @@
+import os
 from base64 import b64encode
 from flask import Flask, flash, session, render_template, redirect, url_for, request #, #send_file
 from gallery.tools.postgres_user_dao import PostgresUserDAO
@@ -11,7 +12,14 @@ from functools import wraps
 app = Flask(__name__)
 app.secret_key = get_secret_flask_session()
 #ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-BUCKET = "edu.au.cc.m6.python-image-gallery"
+
+def get_bucket():
+   if os.getenv("S3_IMAGE_BUCKET"):
+      return os.getenv("S3_IMAGE_BUCKET")
+   else:
+      return "edu.au.cc.m6.python-image-gallery"
+      
+BUCKET = get_bucket()
 
 connect()
 
@@ -154,6 +162,7 @@ def commit_new():
 def upload():
    if request.method == 'POST':
       image = request.files['file']
+      #if image: add this 7/4/2020
       path = session['username'] + '/' + image.filename
       put_object(BUCKET, path, image)
       user = session['username']
