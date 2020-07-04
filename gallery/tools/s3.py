@@ -50,7 +50,7 @@ def main():
 	#create_bucket('edu.au.cc.m6.python-image-gallery','us-west-2')
 	put_object('edu.au.cc.m6.python-image-gallery', 'HELLO', 'WORLD')
 	print (get_object('edu.au.cc.m6.python-image-gallery', 'HELLO'))
-	print (get_object('edu.au.cc.m6.python-image-gallery', 'HELLO')['Body'].read())
+	#print (get_object('edu.au.cc.m6.python-image-gallery', 'HELLO')['Body'].read())
 if __name__ == '__main__':
 	main()
 
