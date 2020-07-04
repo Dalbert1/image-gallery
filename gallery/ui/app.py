@@ -177,20 +177,26 @@ def delete_image():
 @app.route('/<username>/upload', methods=['GET'])
 @requires_auth
 def new_image(username):
-   return render_template('new_image.html', user=get_user_dao().get_user_by_username(session['username']))
+   if username != session['username']:
+      return "Invalid"
+   else:
+      return render_template('new_image.html', user=get_user_dao().get_user_by_username(session['username']))
 
 
 # Displays all images for given user
 @app.route('/<username>/all_images', methods=['GET', 'POST'])
 @requires_auth
 def user_images(username):
-   user_images = get_user_dao().get_images_by_username(username)
-   s3_imports = {}
-   for img_name in user_images:
-      image_object = get_object(BUCKET, img_name)
-      b64_img = b64encode(image_object).decode("utf-8")
-      s3_imports[img_name] = b64_img
-   return render_template('all_user_images.html', contents=s3_imports, user=get_user_dao().get_user_by_username(username))         
+   if username != session['username']:
+      return "Invalid"
+   else:
+      user_images = get_user_dao().get_images_by_username(username)
+      s3_imports = {}
+      for img_name in user_images:
+         image_object = get_object(BUCKET, img_name)
+         b64_img = b64encode(image_object).decode("utf-8")
+         s3_imports[img_name] = b64_img
+      return render_template('all_user_images.html', contents=s3_imports, user=get_user_dao().get_user_by_username(username))         
       
       
 @app.route('/debugSession')
