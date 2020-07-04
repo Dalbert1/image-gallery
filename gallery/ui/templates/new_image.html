@@ -7,9 +7,9 @@
    <header>
       <nav style="color: black;font-family:arial">
       <a href="{{ url_for('root_page') }}">Home</a>
+      <a href="{{ url_for('users') }}">Admin</a>
       <a href="/{{ user.username }}/upload">Upload Image</a>
       <a href="/{{ user.username }}/all_images">View Images</a>
-      <a href="{{ url_for('users') }}">Admin</a>
       <a href="{{ url_for('logout') }}">Logout</a>
    </nav>
    </header>
@@ -26,7 +26,7 @@
                   <div>
                      <h3>Upload your file here:</h3>
                      <form method="POST" action="{{ url_for('upload') }}" enctype=multipart/form-data>
-                        <input name=username value={{ user.username }}>
+                        <input type = hidden name=username value={{ user.username }}>
                         <input type=file name=file>
                         <input type=submit value=Upload>
                      </form>
@@ -36,4 +36,5 @@
       </html>
    </body>
 </html>
+
 

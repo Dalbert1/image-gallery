@@ -1,46 +1,39 @@
 <!DOCTYPE html>
 <html>
-<head>
-   <title>Upload Image</title>
-   <meta charset="utf-8" />
-   </head>
-   <header>
-      <nav style="color: black;font-family:arial">
+  <head>
+    <title>View User Images</title>
+    <meta charset="utf-8" />
+  </head>
+  <header>
+    <nav style="color: black;font-family:arial">
       <a href="{{ url_for('root_page') }}">Home</a>
+      <a href="{{ url_for('users') }}">Admin</a>
       <a href="/{{ user.username }}/upload">Upload Image</a>
       <a href="/{{ user.username }}/all_images">View Images</a>
-      <a href="{{ url_for('users') }}">Admin</a>
       <a href="{{ url_for('logout') }}">Logout</a>
-   </nav>
-   </header>
-   <body>
-      <!DOCTYPE html>
-      <html>
-         <head>
-            <title>S3 Image Upload</title>
-         </head>
-         <body>
-            <div class="content">
-                  <h3>S3 Flask Image Gallery</h3>
-                  <p>Welcome, {{ user.full_name}} ({{ user.username }})!</p>
-                  <div>
-                     
-                     {% if contents %}
-                     <h3>These are your uploaded files:</h3>
-                        <ul>
-                           {% for image in contents %}
-                              <li>
-                                 <img src="data:image/jpeg;base64,{{ image | safe }}" style="width: 100%; max-width: 350px;">
-                              </li>
-                           {% endfor %}
-                        </ul>
-                     {% else %}
-                        <h3>You don't currently have any uploaded images!</h3>
-                     {% endif %}
-                  </div>
-            </div>
-         </body>
-      </html>
-   </body>
+    </nav>
+  </header>
+  <body>
+    <div>
+      <h3>S3 Flask Image Gallery</h3>
+      <h4>Welcome, {{ user.full_name}} ({{ user.username }})!</h4>
+      {% if contents %}
+        <h5>These are your uploaded images:</h5>
+        {% for key, value in contents.items() %}
+          <form action="{{ url_for('delete_image') }}" method="POST">
+            <ul>
+              <li>
+                <h6>{{ key }}</h6>
+                <img src="data:image/jpeg;base64,{{ value | safe }}" style="width: 100%; max-width: 250px;">
+                <input type="hidden" name="key" value="{{ key }}">
+                <input type ="submit" value="Delete" style="margin: 5px; font-size: 16px;width: 100px;text-align: center;" />
+              </li>
+              </ul>
+        {% endfor %}
+      {% else %}
+      <h3>You don't currently have any uploaded images!</h3>
+      {% endif %}
+    </div>
+  </body>
 </html>
 

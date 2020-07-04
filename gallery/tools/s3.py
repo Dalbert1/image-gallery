@@ -37,6 +37,15 @@ def get_object(bucket_name, key):
 		return None
 	return body
 	
+def delete_object(bucket_name, key):
+	try:
+		s3_client = boto3.client('s3')
+		res = s3_client.delete_object(Bucket=bucket_name, Key=key)
+	except ClientError as e:
+		logging.error(e)
+		return None
+	return res
+	
 def main():
 	#create_bucket('edu.au.cc.m6.python-image-gallery','us-west-2')
 	put_object('edu.au.cc.m6.python-image-gallery', 'HELLO', 'WORLD')
@@ -44,4 +53,5 @@ def main():
 	print (get_object('edu.au.cc.m6.python-image-gallery', 'HELLO')['Body'].read())
 if __name__ == '__main__':
 	main()
+
 
