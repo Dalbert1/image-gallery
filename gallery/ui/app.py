@@ -170,7 +170,6 @@ def delete_image():
    print(username + ' ' + key)
    deleteImage(username, key)
    delete_object(BUCKET, key)
-   #return redirect(url_for('root_page'))
    return redirect(url_for('user_images', username=username))      
      
     
