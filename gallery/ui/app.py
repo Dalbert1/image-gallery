@@ -12,7 +12,6 @@ from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = get_secret_flask_session()
-#ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 def get_bucket():
    if os.getenv("S3_IMAGE_BUCKET"):
@@ -21,11 +20,12 @@ def get_bucket():
       return "edu.au.cc.m6.python-image-gallery"
       
 BUCKET = get_bucket()
-
 connect()
+
 
 def get_user_dao():
    return PostgresUserDAO()
+
 
 def check_admin():
    if 'username' in session:
@@ -33,6 +33,7 @@ def check_admin():
       return is_admin
    else: 
       return None
+
 
 def check_auth():
    return 'username' in session and get_user_dao().get_user_by_username(session['username'])
@@ -75,12 +76,12 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
    if request.method == 'POST':
-      user = get_user_dao().get_user_by_username(request.form["username"]) # returns user object from DAO
+      user = get_user_dao().get_user_by_username(request.form["username"])
       if user is None or user.password != request.form["password"]: 
          return redirect('/invalidLogin')
       else:
          session['username'] = request.form["username"]
-         return render_template('home.html', user=get_user_dao().get_user_by_username(session['username']))
+         return redirect('/')
    else:
       return render_template('login.html')
          
@@ -113,9 +114,9 @@ def executeDeleteUser(username):
 
 
 # Invalid Login redirect
-@app.route('/invalidLogin') # LOOK AT MESSAGE FLASHING FUNCTION INSTEAD OF REDIRECT ~  ALLOWS TO ASYNC TELL USER THEIR STUFF IS INVALID
+@app.route('/invalidLogin')
 def invalidLogin():
-   return "Invalid"
+   return "Invalid Login"
    
 
 # Modify User page
@@ -149,8 +150,8 @@ def new_user_interface():
 @app.route('/admin/commitNewUser', methods=['POST'])
 @requires_admin 
 def commit_new():
-   user = get_user_dao().get_user_by_username(request.form["username"]) # returns user object from DAO
-   if user is None:  # if user not found or password wrong
+   user = get_user_dao().get_user_by_username(request.form["username"])
+   if user is None: 
       get_user_dao().create_user(request.form["username"], request.form["password"], request.form["full_name"])
    return redirect('/admin/users')
    
@@ -168,17 +169,19 @@ def upload():
          insertImage(user, path)
          return redirect(url_for('user_images', username=user))
    return "Invalid Request"
-         
+   
+   
 # Deletes specified image      
-@app.route("/delete/image", methods=['POST'])
+@app.route("/delete/image/<username>/<path:key>", methods=['GET'])
 @requires_auth
-def delete_image():
-   username = session['username']
-   key = request.form["key"]
-   print(username + ' ' + key)
-   deleteImage(username, key)
-   delete_object(BUCKET, key)
-   return redirect(url_for('user_images', username=username))      
+def delete_image(username, key):
+   if username != session['username']:
+      return "Invalid Request"
+   else:
+      username = session['username']
+      deleteImage(username, key)
+      delete_object(BUCKET, key)
+      return redirect(url_for('user_images', username=username))    
      
     
 # Loads page for user to upload their new image
@@ -186,7 +189,7 @@ def delete_image():
 @requires_auth
 def new_image(username):
    if username != session['username']:
-      return "Invalid"
+      return "Invalid Request"
    else:
       return render_template('new_image.html', user=get_user_dao().get_user_by_username(session['username']))
 
@@ -196,24 +199,27 @@ def new_image(username):
 @requires_auth
 def user_images(username):
    if username != session['username']:
-      return "Invalid"
+      return "Invalid Request"
    else:
       user_images = get_user_dao().get_images_by_username(username)
       s3_imports = {}
-      for img_name in user_images:
-         image_object = get_object(BUCKET, img_name)
-         b64_img = b64encode(image_object).decode("utf-8")
-         s3_imports[img_name] = b64_img
+      if user_images:
+         for img_name in user_images:
+            image_object = get_object(BUCKET, img_name)
+            b64_img = b64encode(image_object).decode("utf-8")
+            s3_imports[img_name] = b64_img
       return render_template('all_user_images.html', contents=s3_imports, user=get_user_dao().get_user_by_username(username))         
       
       
-@app.route("/viewImage/<path:key>", methods=['GET', 'POST'])
+@app.route("/<username>/viewImage/<path:key>", methods=['GET', 'POST'])
 @requires_auth
-def view_image(key):
-   print(key)
-   image_object = get_object(BUCKET, key=key)
-   b64_img = b64encode(image_object).decode("utf-8")
-   return render_template('viewImage.html', image=b64_img)
+def view_image(username, key):
+   if username != session['username']:
+      return "Invalid Request"
+   else:
+      image_object = get_object(BUCKET, key=key)
+      b64_img = b64encode(image_object).decode("utf-8")
+      return render_template('viewImage.html', image=b64_img)
   
 
 @app.route('/debugSession')
@@ -222,4 +228,3 @@ def debugSession():
    for key, value in session.items():
       result += key+"->"+str(value)+"<br />"
    return result
-
