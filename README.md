@@ -1,2 +1,2 @@
 # python-image-gallery
-mod 2 4973
+A Python Based Image Gallery Application
