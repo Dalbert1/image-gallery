@@ -1,12 +1,13 @@
 import os
 from base64 import b64encode
-from flask import Flask, flash, session, render_template, redirect, url_for, request #, #send_file
+from flask import Flask, flash, session, render_template, redirect, url_for, request
 from gallery.tools.postgres_user_dao import PostgresUserDAO
 from gallery.tools.user import User
 from gallery.tools.db import connect, insertImage, deleteImage, deleteAllUserImages
 from gallery.tools.secrets import get_secret_flask_session
 from gallery.tools.s3 import get_object, put_object, delete_object
 from werkzeug.utils import secure_filename
+from markupsafe import escape
 from functools import wraps
 
 app = Flask(__name__)
@@ -25,7 +26,6 @@ connect()
 
 def get_user_dao():
    return PostgresUserDAO()
-   
 
 def check_admin():
    if 'username' in session:
@@ -33,7 +33,6 @@ def check_admin():
       return is_admin
    else: 
       return None
-   
 
 def check_auth():
    return 'username' in session and get_user_dao().get_user_by_username(session['username'])
@@ -157,19 +156,19 @@ def commit_new():
    
 
 # Performs the file uploads
-@app.route("/upload", methods=['GET', 'POST'])
+@app.route("/upload", methods=['POST'])
 @requires_auth
 def upload():
    if request.method == 'POST':
       image = request.files['file']
-      #if image: add this 7/4/2020
-      path = session['username'] + '/' + image.filename
-      put_object(BUCKET, path, image)
-      user = session['username']
-      insertImage(user, path)
-      return redirect(url_for('root_page'))
-      
-
+      if image:
+         path = session['username'] + '/' + image.filename
+         put_object(BUCKET, path, image)
+         user = session['username']
+         insertImage(user, path)
+         return redirect(url_for('user_images', username=user))
+   return "Invalid Request"
+         
 # Deletes specified image      
 @app.route("/delete/image", methods=['POST'])
 @requires_auth
@@ -208,9 +207,19 @@ def user_images(username):
       return render_template('all_user_images.html', contents=s3_imports, user=get_user_dao().get_user_by_username(username))         
       
       
+@app.route("/viewImage/<path:key>", methods=['GET', 'POST'])
+@requires_auth
+def view_image(key):
+   print(key)
+   image_object = get_object(BUCKET, key=key)
+   b64_img = b64encode(image_object).decode("utf-8")
+   return render_template('viewImage.html', image=b64_img)
+  
+
 @app.route('/debugSession')
 def debugSession():
    result = ""
    for key, value in session.items():
       result += key+"->"+str(value)+"<br />"
    return result
+

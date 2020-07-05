@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>View Image</title>
+      <meta charset="utf-8" />
+   </head>
+   <header>
+      <nav style="color: black;font-family:arial">
+         <a href="{{ url_for('root_page') }}">Home</a>
+         <a href="{{ url_for('users') }}">Admin</a>
+         <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+   </header>
+   <body>
+      <img src="data:image/jpeg;base64,{{ image | safe }}">
+   </body>
+</html>
+

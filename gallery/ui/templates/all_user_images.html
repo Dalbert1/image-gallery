@@ -21,14 +21,11 @@
         <h5>These are your uploaded images:</h5>
         {% for key, value in contents.items() %}
           <form action="{{ url_for('delete_image') }}" method="POST">
-            <ul>
-              <li>
-                <h6>{{ key }}</h6>
-                <img src="data:image/jpeg;base64,{{ value | safe }}" style="width: 100%; max-width: 250px;">
+                <a href="{{ url_for('view_image', key=key) }}">
+                  <img src="data:image/jpeg;base64,{{ value | safe }}" width="200" height="200">
+                </a>
                 <input type="hidden" name="key" value="{{ key }}">
                 <input type ="submit" value="Delete" style="margin: 5px; font-size: 16px;width: 100px;text-align: center;" />
-              </li>
-              </ul>
         {% endfor %}
       {% else %}
       <h3>You don't currently have any uploaded images!</h3>
