@@ -3,15 +3,20 @@ from base64 import b64encode
 from flask import Flask, flash, session, render_template, redirect, url_for, request
 from gallery.tools.postgres_user_dao import PostgresUserDAO
 from gallery.tools.user import User
-from gallery.tools.db import connect, insertImage, deleteImage, deleteAllUserImages
-from gallery.tools.secrets import get_secret_flask_session
+from gallery.tools.db import connect, insertImage, deleteImage, deleteAllUserImages, get_secret
 from gallery.tools.s3 import get_object, put_object, delete_object
 from werkzeug.utils import secure_filename
 from markupsafe import escape
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = get_secret_flask_session()
+
+def get_key():
+    get_secret()
+    return os.getenv("flask_session_key")
+
+
+app.secret_key = get_key() 
 
 def get_bucket():
    if os.getenv("S3_IMAGE_BUCKET"):
@@ -228,3 +233,4 @@ def debugSession():
    for key, value in session.items():
       result += key+"->"+str(value)+"<br />"
    return result
+
